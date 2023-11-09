@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+struct Queue {
+    int front, rear;
+    int array[MAX_SIZE];
+};
+
+void initializeQueue(struct Queue *queue) {
+    queue->front = -1;
+    queue->rear = -1;
+}
+
+int isEmpty(struct Queue *queue) {
+    return queue->front == -1;
+}
+
+int isFull(struct Queue *queue) {
+    return (queue->rear + 1) % MAX_SIZE == queue->front;
+}
+
+void enqueue(struct Queue *queue, int value) {
+    if (isFull(queue)) {
+        printf("Queue overflow. Cannot enqueue more elements.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (isEmpty(queue)) {
+        queue->front = 0;
+    }
+
+    queue->rear = (queue->rear + 1) % MAX_SIZE;
+    queue->array[queue->rear] = value;
+}
+
+int dequeue(struct Queue *queue) {
+    if (isEmpty(queue)) {
+        printf("Queue underflow. Cannot dequeue from an empty queue.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int value = queue->array[queue->front];
+
+    if (queue->front == queue->rear) {
+        // If the queue has only one element, reset front and rear
+        queue->front = -1;
+        queue->rear = -1;
+    } else {
+        queue->front = (queue->front + 1) % MAX_SIZE;
+    }
+
+    return value;
+}
+
+int front(struct Queue *queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty. Cannot get front element.\n");
+        exit(EXIT_FAILURE);
+    }
+    return queue->array[queue->front];
+}
+
+int main() {
+    struct Queue queue;
+    initializeQueue(&queue);
+
+    enqueue(&queue, 10);
+    enqueue(&queue, 20);
+    enqueue(&queue, 30);
+
+    printf("Front element of the queue: %d\n", front(&queue));
+
+    printf("Dequeueing elements from the queue: ");
+    while (!isEmpty(&queue)) {
+        printf("%d ", dequeue(&queue));
+    }
+    printf("\n");
+
+    return 0;
+}
