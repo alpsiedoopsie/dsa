@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Queue {
+    struct Node* front;
+    struct Node* rear;
+};
+
+void initializeQueue(struct Queue *queue) {
+    queue->front = NULL;
+    queue->rear = NULL;
+}
+
+int isEmpty(struct Queue *queue) {
+    return queue->front == NULL;
+}
+
+void enqueue(struct Queue *queue, int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (isEmpty(queue)) {
+        queue->front = newNode;
+        queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+}
+
+int dequeue(struct Queue *queue) {
+    if (isEmpty(queue)) {
+        printf("Queue underflow. Cannot dequeue from an empty queue.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    struct Node* temp = queue->front;
+    int value = temp->data;
+
+    if (queue->front == queue->rear) {
+        // If the queue has only one element, reset front and rear
+        queue->front = NULL;
+        queue->rear = NULL;
+    } else {
+        queue->front = temp->next;
+    }
+
+    free(temp);
+    return value;
+}
+
+int front(struct Queue *queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty. Cannot get front element.\n");
+        exit(EXIT_FAILURE);
+    }
+    return queue->front->data;
+}
+
+int main() {
+    struct Queue queue;
+    initializeQueue(&queue);
+
+    enqueue(&queue, 10);
+    enqueue(&queue, 20);
+    enqueue(&queue, 30);
+
+    printf("Front element of the queue: %d\n", front(&queue));
+
+    printf("Dequeueing elements from the queue: ");
+    while (!isEmpty(&queue)) {
+        printf("%d ", dequeue(&queue));
+    }
+    printf("\n");
+
+    return 0;
+}
