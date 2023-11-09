@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+void displayArray(int arr[], int size) {
+    printf("Array: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+void insertElement(int arr[], int *size, int position, int value) {
+    if (*size >= MAX_SIZE) {
+        printf("Array is full. Cannot insert more elements.\n");
+        return;
+    }
+
+    if (position < 0 || position > *size) {
+        printf("Invalid position for insertion.\n");
+        return;
+    }
+
+    for (int i = *size; i > position; i--) {
+        arr[i] = arr[i - 1];
+    }
+
+    arr[position] = value;
+    (*size)++;
+}
+
+void deleteElement(int arr[], int *size, int position) {
+    if (*size <= 0) {
+        printf("Array is empty. Cannot delete elements.\n");
+        return;
+    }
+
+    if (position < 0 || position >= *size) {
+        printf("Invalid position for deletion.\n");
+        return;
+    }
+
+    for (int i = position; i < *size - 1; i++) {
+        arr[i] = arr[i + 1];
+    }
+
+    (*size)--;
+}
+
+void copyArray(int source[], int size, int destination[]) {
+    for (int i = 0; i < size; i++) {
+        destination[i] = source[i];
+    }
+}
+
+int main() {
+    int originalArray[MAX_SIZE];
+    int newArray[MAX_SIZE];
+    int originalSize = 0;
+
+    // Create and display the original array
+    insertElement(originalArray, &originalSize, 0, 10);
+    insertElement(originalArray, &originalSize, 1, 20);
+    insertElement(originalArray, &originalSize, 2, 30);
+    displayArray(originalArray, originalSize);
+
+    // Insert and display an element in the original array
+    insertElement(originalArray, &originalSize, 1, 15);
+    displayArray(originalArray, originalSize);
+
+    // Delete and display an element in the original array
+    deleteElement(originalArray, &originalSize, 2);
+    displayArray(originalArray, originalSize);
+
+    // Copy the original array to a new array and display
+    copyArray(originalArray, originalSize, newArray);
+    displayArray(newArray, originalSize);
+
+    return 0;
+}
