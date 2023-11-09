@@ -1,0 +1,41 @@
+class Node:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+class HashTableSeparateChaining:
+    def __init__(self, size):
+        self.size = size
+        self.table = [None] * size
+
+    def hash_function(self, key):
+        return hash(key) % self.size
+
+    def insert(self, key, value):
+        index = self.hash_function(key)
+        if self.table[index] is None:
+            self.table[index] = Node(key, value)
+        else:
+            current = self.table[index]
+            while current.next:
+                current = current.next
+            current.next = Node(key, value)
+
+    def search(self, key):
+        index = self.hash_function(key)
+        current = self.table[index]
+        while current:
+            if current.key == key:
+                return current.value
+            current = current.next
+        return None
+
+# Example usage
+hash_table_chaining = HashTableSeparateChaining(10)
+hash_table_chaining.insert("apple", 5)
+hash_table_chaining.insert("banana", 8)
+hash_table_chaining.insert("cherry", 3)
+
+print(hash_table_chaining.search("apple"))  # Output: 5
+print(hash_table_chaining.search("grape"))  # Output: None
