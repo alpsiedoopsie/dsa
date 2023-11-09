@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_SIZE 100
+
+struct Stack {
+    int top;
+    int array[MAX_SIZE];
+};
+
+void initializeStack(struct Stack *stack) {
+    stack->top = -1;
+}
+
+int isEmpty(struct Stack *stack) {
+    return stack->top == -1;
+}
+
+void push(struct Stack *stack, int value) {
+    if (stack->top == MAX_SIZE - 1) {
+        printf("Stack overflow. Cannot push more elements.\n");
+        exit(EXIT_FAILURE);
+    }
+    stack->array[++stack->top] = value;
+}
+
+int pop(struct Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack underflow. Cannot pop from an empty stack.\n");
+        exit(EXIT_FAILURE);
+    }
+    return stack->array[stack->top--];
+}
+
+int evaluatePostfix(char expression[]) {
+    struct Stack stack;
+    initializeStack(&stack);
+
+    for (int i = 0; expression[i] != '\0'; i++) {
+        if (isdigit(expression[i])) {
+            push(&stack, expression[i] - '0');
+        } else if (expression[i] != ' ' && expression[i] != '\n') {
+            int operand2 = pop(&stack);
+            int operand1 = pop(&stack);
+
+            switch (expression[i]) {
+                case '+':
+                    push(&stack, operand1 + operand2);
+                    break;
+                case '-':
+                    push(&stack, operand1 - operand2);
+                    break;
+                case '*':
+                    push(&stack, operand1 * operand2);
+                    break;
+                case '/':
+                    push(&stack, operand1 / operand2);
+                    break;
+                default:
+                    printf("Invalid operator in the expression.\n");
+                    exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    if (isEmpty(&stack)) {
+        printf("Invalid postfix expression.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return pop(&stack);
+}
+
+int main() {
+    char postfixExpression[MAX_SIZE];
+    char ch;
+    int i = 0;
+
+    printf("Enter a postfix expression (e.g., 2 3 * 5 +): ");
+    while ((ch = getchar()) != '\n' && i < MAX_SIZE - 1) {
+        postfixExpression[i++] = ch;
+    }
+    postfixExpression[i] = '\0';
+
+    int result = evaluatePostfix(postfixExpression);
+    printf("Result of the postfix expression: %d\n", result);
+
+    return 0;
+}
